@@ -40,7 +40,7 @@
 			<div>Ab, at, asperiores magni temporibus odit officia fugit iste ea deserunt rerum recusandae veritatis et saepe aliquam amet neque nostrum maxime sapiente blanditiis esse suscipit pariatur placeat error vel illum.</div>
 		</div>
 		<div class="chatArea row">
-			<textarea class="form-control col-md-12" id="chatTextArea" disabled="disabled" placeholder="type here to chat with c1..."></textarea>
+			<textarea class="form-control col-md-12" id="chatTextArea" disabled="disabled" placeholder="type here to chat with <%= name %>..."></textarea>
 			<button class="btn btn-block btn-primary col-md-12" id="submitButton">send</button>
 			</div>
 			
@@ -50,17 +50,29 @@
 var name = '<%= name %>';
 var key = '<%= key %>';
 var nick = 'usernick1';
-$status = $('#statusContainer');
+
+
 var setStatus = function(msg,state){
 	$status.html(msg);
 	$status.attr('class','btn btn-'+state);
+};
+
+var setStatusOnline = function(){
+	$chatTextArea.attr('disabled',null);
+	setStatus(name+' is online','success');
+};
+
+var setStatusOffline = function(){
+	$chatTextArea.attr('disabled','disabled');
+	setStatus(name+' is offline','danger');
 };
 
 	$(document).ready(function(){
 		//setting height 
 		var th = $(window).height();
 		$('#chatroomBox').css('height',(th-80)+'px');
-		var $chatTextArea = $('#chatTextArea');
+		 $chatTextArea = $('#chatTextArea');
+		 $status = $('#statusContainer');
 		var socket = io.connect('http://localhost');
 		socket.on('connection:finished',function(data){
 			setStatus('checking online status','info');
@@ -72,12 +84,19 @@ var setStatus = function(msg,state){
 		socket.on('normal:joined',function(data){
 			console.log('normal joined '+data);
 			if(data.status=='online'){
-				$chatTextArea.attr('disabled',null);
-				setStatus(name+' is online','success');
+				setStatusOnline();
 			} else {
 				setStatus(name+' is offline','danger');
 			}
 			
+		});
+
+		socket.on('chatbox:cameOnline',function(){
+			setStatusOnline();
+		});
+
+		socket.on('chatbox:goneOffline',function(){
+			setStatusOffline();
 		});
 
 		

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" ng-app="chatBoxMaster">
+<head>
+	<meta charset="UTF-8">
+	<title>Chat Box</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/angular.min.js"></script>
+	<script src="js/angular-route.min.js"></script>
+	<script src="js/ng-socket-io.min.js"></script>
+	<script src="js/script.js"></script>
+
+</head>
+<body>
+	<h3>{{connectMsg}}</h3>
+	<div class="container-fluid" ng-view>
+		
+	</div>
+	
+</body>
+</html>

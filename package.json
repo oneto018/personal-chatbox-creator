@@ -1,5 +1,5 @@
 {
-  "name":"personal-chatbox-creator",
+  "name": "personal-chatbox-creator",
   "version": "0.0.0",
   "author": "Nagarajan.N <oneto018@gmail.com>",
   "keywords": [
@@ -8,14 +8,16 @@
     "embed",
     "socket.io"
   ],
-
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/oneto018/personal-chatbox-creator.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oneto018/personal-chatbox-creator.git"
   },
   "dependencies": {
     "express": "~3.4.8",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "lodash-node": "~2.4.1",
+    "bcryptjs": "~0.7.12",
+    "vow": "~0.4.1",
+    "ejs": "~0.8.5"
   }
-
 }
