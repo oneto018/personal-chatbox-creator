@@ -2,6 +2,7 @@ var _find = require('lodash-node/modern/collections/find');
 var _pull = require('lodash-node/modern/arrays/pull');
 var bcrypt = require('bcryptjs');
 var vow = require('vow');
+var pgQuery = require('./pgQuery.js');
 
 var dataStore = [
 				{email:'test@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key1'},
@@ -12,22 +13,26 @@ var memory = {chatboxes:{},sockets:{},users:{}};
 
 var login = function (email,pass,socketId){
 	var deferred = vow.defer();
-	var user = _find(dataStore,{email:email});
-	if(user){
-		var hash = user.pass;
-		bcrypt.compare(pass, hash, function(err, res) {
-    		// res == true
-    		if(res){
-    			memory.chatboxes[user.key] = socketId ;
-				memory.sockets[socketId] = user.key;
-				deferred.resolve({key:user.key,socketId:socketId});
-    		}
-		});
-		
-	} else {
+	var q = pgQuery.query('select name,email,password as pass from chatbox_users where email = $1',[email]);
+	q.then(function(result){
+		if(result.rows.length>0){
+			var user = result.rows[0];
+			var hash = user.pass;
+			bcrypt.compare(pass, hash, function(err, res) {
+	    		// res == true
+	    		if(res){
+	    			memory.chatboxes[user.key] = socketId ;
+					memory.sockets[socketId] = user.key;
+					deferred.resolve({key:user.key,socketId:socketId});
+	    		}
+			});
+		} else {
+			deferred.reject();
+		}
+	},function(){
 		deferred.reject();
-	}
-
+	});
+	//var user = _find(dataStore,{email:email});
 	return deferred.promise();
 };
 
