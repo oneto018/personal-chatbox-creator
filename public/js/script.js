@@ -245,6 +245,7 @@ function MainCtl($scope,Api,$location,storage,socket){
     var msgObject = {msg:msg,from:'you'};
     socket.emit('chatBoxToclient:sendMsg',{msg:msg,id:id});
     $scope.clients[id].messages.push(msgObject);
+    $scope.clients[id].curMessage = '';
 
   };
 
