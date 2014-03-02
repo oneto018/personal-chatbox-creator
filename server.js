@@ -3,6 +3,7 @@ var app = express()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
 
+var pgQuery = require('./pgQuery.js');
 var chatbox = require('./chatbox.js');
 //setup  ejs files
 app.set('view engine', 'ejs');
@@ -15,6 +16,13 @@ server.listen(process.env.PORT || 80);
 
 app.get('/te', function (req, res) {
   res.send(__dirname + '/index.html');
+});
+
+app.get('/dbc/:id',function(req,res){
+  var q = pgQuery.query('select name,email,password as pass from chatbox_users where id = $1',[req.params.id]);
+  q.then(function(result){
+    res.send(JSON.stringify(result));
+  });
 });
 
 app.get('/client/:key/:name',function(req,res){

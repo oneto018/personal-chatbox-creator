@@ -187,6 +187,7 @@ function LoginCtl($scope,socket,$location,$timeout,Api){
 }
 
 function MainCtl($scope,Api,$location,storage,socket){
+  $chatboxName = 'ChatBox';
   $scope.key = Api.getKey();
   if(!$scope.key){
     var user = (storage.supported())? Api.retrieveUser() : false;
