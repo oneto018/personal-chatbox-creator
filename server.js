@@ -29,6 +29,11 @@ app.get('/client/:key/:name',function(req,res){
   res.render('client',{name:req.params.name,key:req.params.key});
 });
 
+app.get('/client/:key',function(req,res){
+  var name = 'chatbox';
+  res.render('client',{name:name,key:req.params.key});
+});
+
 io.sockets.on('connection', function (socket) {
 
   //-------- generic socket connection complete event ---------
