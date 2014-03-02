@@ -197,7 +197,7 @@ var gotMsg = function(msg){
 		 	}
 		 });
 
-		var socket = io.connect('http://localhost');
+		var socket = io.connect();
 		socket.on('connection:finished',function(data){
 			setStatus('checking online status','info');
 			console.log('connected to socket , socket.id ='+data);
