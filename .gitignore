@@ -6,6 +6,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.bat
+*.lnk
 
 pids
 logs

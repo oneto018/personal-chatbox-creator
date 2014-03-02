@@ -1,6 +1,6 @@
 {
   "name": "personal-chatbox-creator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Nagarajan.N <oneto018@gmail.com>",
   "keywords": [
     "chatbox",
@@ -19,5 +19,8 @@
     "bcryptjs": "~0.7.12",
     "vow": "~0.4.1",
     "ejs": "~0.8.5"
+  },
+   "engines": {
+    "node": "0.10.x"
   }
 }

@@ -21,26 +21,95 @@
 		#chatroomBox{
 			width: 100%;
 			overflow: auto;
+			background-color: #ccc;
 		}
 		#statusContainer{
 			width: 100%;
+		}
+		
+		#chatroomBox .room{
+			overflow: auto;
+		}
+
+		#chatroomBox .item{
+			clear: both;
+			width: 90%;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			font-size: 14px;
+			padding-right: 5%;
+			background-color: #fff;
+			
+
+		}
+
+		#chatroomBox .item:last-child{
+			margin-bottom: 10px;
+		}
+
+
+
+		#chatroomBox .item.you{
+			float: left;
+			-webkit-box-shadow:1px 2px 2px 0px rgba(0,0,0,0.5);
+			-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.5);
+			box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.5);
+		}
+		#chatroomBox .from{
+			display: block;
+			color: #0F0;
+			font-weight: bold;
+			padding: 4px;
+			background-color: #fff;
+			margin-bottom: 3px;
+			clear: both;
+
+		}
+
+		#chatroomBox .from.fromYou{
+			float: left;
+		}
+
+		
+		
+		.you +  .fromYou , .other + .fromOther{
+			display: none !important;
+			font-weight: normal;
+		}
+	
+		#chatroomBox .from.fromOther{
+			
+			float: right;
+		}
+		
+
+		#chatroomBox .item.other{
+			float: right;
+			-webkit-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.5);
+			-moz-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.5);
+			box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.5);
+			padding-right: 3%;
+			padding-left: 2%;
+		}
+
+		.item.you + .fromYou + .item.you,.item.other+ .fromOther + .item.other{
+			margin-top: 0 !important;
 		}
 	</style>
 </head>
 
 <body>
+	
 	<div class="container-fluid">
 		<div class="btn btn-default btn-block" id="statusContainer">connecting...</div>
 		<div id="chatroomBox">
-			<div>
-			<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, numquam, voluptas, dicta porro facilis soluta deserunt voluptate doloribus quia quis animi dolores delectus cum tenetur illo! Dolor eum quia ipsam.</div>
-			<div>Magnam, excepturi, facere autem accusantium dolores voluptatibus magni dignissimos quae eius quos necessitatibus natus consequatur temporibus nisi nobis soluta minima possimus et odit quas sunt commodi reprehenderit qui. Sed, architecto.</div>
-			<div>Id, facere, itaque, eos quod atque dolor vero omnis nobis quibusdam temporibus autem expedita unde harum nemo perspiciatis labore earum esse iure quisquam adipisci odio quaerat eveniet. Omnis, eum, eos.</div>
-			<div>Dicta, id, repellat cum quibusdam obcaecati voluptatibus minus sunt mollitia illum nesciunt necessitatibus provident veritatis dignissimos porro adipisci excepturi magni eos cupiditate similique impedit sint? Ipsam totam facere molestias dolor!</div>
-			<div>Ab, at, asperiores magni temporibus odit officia fugit iste ea deserunt rerum recusandae veritatis et saepe aliquam amet neque nostrum maxime sapiente blanditiis esse suscipit pariatur placeat error vel illum.</div>
+			<div class="room">
+				
+			</div>
+			
 		</div>
 		<div class="chatArea row">
-			<textarea class="form-control col-md-12" id="chatTextArea" disabled="disabled" placeholder="type here to chat with <%= name %>..."></textarea>
+			<textarea class="form-control col-md-12" id="chatTextArea" disabled="disabled" placeholder="connecting..."></textarea>
 			<button class="btn btn-block btn-primary col-md-12" id="submitButton">send</button>
 			</div>
 			
@@ -49,8 +118,8 @@
 <script>
 var name = '<%= name %>';
 var key = '<%= key %>';
-var nick = 'usernick1';
-
+window.nick = false;
+var $chatroomBox = null;
 
 var setStatus = function(msg,state){
 	$status.html(msg);
@@ -59,20 +128,75 @@ var setStatus = function(msg,state){
 
 var setStatusOnline = function(){
 	$chatTextArea.attr('disabled',null);
+	$chatTextArea.attr('placeholder','type here to chat with '+name+'...');
 	setStatus(name+' is online','success');
 };
 
-var setStatusOffline = function(){
+var setStatusOffline = function(msg){
 	$chatTextArea.attr('disabled','disabled');
-	setStatus(name+' is offline','danger');
+	$chatTextArea.attr('placeholder',msg);
+	setStatus(msg,'danger');
+};
+
+var sendMsg = function(msg,socket){
+	socket.emit('client:sendMsg',{msg:msg,nick:window.nick,key:key});
+	var content = '<div class="from fromYou">you</div><div class="item you">'+msg+'</div>';
+
+	$(content).appendTo($chatroomBox);
+
+	var innerHeight = $chatroomBox.height();
+	var outerHeight = $('#chatroomBox').height();
+	var dif = innerHeight - outerHeight;
+	//console.log('dif='+dif+'; innerHeight='+innerHeight);
+	if(dif>0){
+		// /console.log('dif='+dif);
+		$('#chatroomBox').scrollTop(dif);
+	}
+};
+
+var gotMsg = function(msg){
+	var content = '<div class="from fromOther"><%= name %></div><div class="item other">'+msg+'</div>';
+	$(content).appendTo($chatroomBox);
+	var innerHeight = $chatroomBox.height();
+	var outerHeight = $('#chatroomBox').height();
+	var dif = innerHeight - outerHeight;
+	//console.log('dif='+dif+'; innerHeight='+innerHeight);
+	if(dif>0){
+		// /console.log('dif='+dif);
+		$('#chatroomBox').scrollTop(dif);
+	}
 };
 
 	$(document).ready(function(){
-		//setting height 
-		var th = $(window).height();
-		$('#chatroomBox').css('height',(th-80)+'px');
+		$chatroomBox = $('#chatroomBox .room');
 		 $chatTextArea = $('#chatTextArea');
+
+		//setting height 
+		var promptCycle = function(){
+			var result = prompt("Please enter your preferred name");
+			if(result){
+				return result;
+			} else {
+				return promptCycle();
+			}
+		};
+
+		//window.nick = promptCycle();
+
+		var th = $(window).height();
+		var heightToCut = $('#statusContainer').height()+$('.chatArea').height();
+		$('#chatroomBox').css('height',(th-heightToCut)+'px');
+		
+
+
 		 $status = $('#statusContainer');
+
+		 $chatTextArea.on('focus',function(){
+		 	if(!window.nick){
+		 		window.nick = promptCycle();
+		 	}
+		 });
+
 		var socket = io.connect('http://localhost');
 		socket.on('connection:finished',function(data){
 			setStatus('checking online status','info');
@@ -80,6 +204,7 @@ var setStatusOffline = function(){
 			socket.emit('normal:join',{key:key,nick:nick});
 			console.log('joining for session');
 		});
+
 
 		socket.on('normal:joined',function(data){
 			console.log('normal joined '+data);
@@ -96,11 +221,38 @@ var setStatusOffline = function(){
 		});
 
 		socket.on('chatbox:goneOffline',function(){
-			setStatusOffline();
+			setStatusOffline(name+' is offline');
 		});
 
-		
+		socket.on('chatBoxToclient:gotMsg',function(data){
+			console.log('chatBoxToclient:gotMsg',data);
+			var msg = data.msg;
+			gotMsg(msg);
+		});
 
+		socket.on('disconnect', function () {
+			setStatusOffline('there is some netowrk error. ');
+		});
+
+		var $submitButton = $('#submitButton');
+		$submitButton.on('click',function(){
+			var msg = $chatTextArea.val();
+			if($.trim(msg)){
+				if($.trim(msg).length>0){
+					sendMsg(msg,socket);
+					$chatTextArea.val('');
+				}
+			}
+			
+		});
+
+		$(document).on('keydown',function(e){
+			if(e.keyCode==13){
+				e.preventDefault();
+				$submitButton.trigger('click');
+				return false;
+			}
+		});
 		
 	});
 </script>	

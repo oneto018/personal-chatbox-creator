@@ -5,14 +5,114 @@
 	<title>Chat Box</title>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/lodash.min.js"></script>
 	<script src="js/angular.min.js"></script>
 	<script src="js/angular-route.min.js"></script>
 	<script src="js/ng-socket-io.min.js"></script>
 	<script src="js/script.js"></script>
+	<style>
+	#screenToHide{
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		background-color: rgba(0,0,0,0.6);
+		color: #fff;
+	}
+	#screenToHide .msg{
+		width: 100%;
+		text-align: center;
+		position: relative;
+		top: 30%;
+	}
+	#mainNav{
+		background-color: #222;
+		color: #fff;
+		height: 40px;
+		line-height: 40px;
 
+	}
+	
+	.chatroomBox{
+		overflow: auto;
+		background-color: #ccc;
+		max-height: 400px;
+	}
+
+	.chatroomBox .room{
+			overflow: auto;
+		}
+
+		.chatroomBox .item{
+			clear: both;
+			width: 90%;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			font-size: 14px;
+			padding-right: 5%;
+			background-color: #fff;
+			
+
+		}
+
+		.chatroomBox .item:last-child{
+			margin-bottom: 10px;
+		}
+
+
+
+		.chatroomBox .item.you{
+			float: left;
+			-webkit-box-shadow:1px 2px 2px 0px rgba(0,0,0,0.5);
+			-moz-box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.5);
+			box-shadow: 1px 2px 2px 0px rgba(0,0,0,0.5);
+		}
+		.chatroomBox .from{
+			display: block;
+			color: #0F0;
+			font-weight: bold;
+			padding: 4px;
+			background-color: #fff;
+			margin-bottom: 3px;
+			clear: both;
+
+		}
+
+		.chatroomBox .from.fromYou{
+			float: left;
+		}
+
+		
+		
+		.you +  .fromYou , .other + .fromOther{
+			display: none !important;
+			font-weight: normal;
+		}
+	
+		.chatroomBox .from.fromOther{
+			
+			float: right;
+		}
+		
+
+		.chatroomBox .item.other{
+			float: right;
+			padding-left: 5px;
+			padding-right: 5px;
+			-webkit-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.5);
+			-moz-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.5);
+			box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.5);
+		}
+
+		.item.you + .fromYou + .item.you,.item.other+ .fromOther + .item.other{
+			margin-top: 0 !important;
+		}
+
+	</style>
 </head>
 <body>
-	<h3>{{connectMsg}}</h3>
+	<div id="screenToHide" ng-hide="connected">
+		<div class="msg"><h1>{{connectMsg}}</h1></div>
+	</div>
 	<div class="container-fluid" ng-view>
 		
 	</div>

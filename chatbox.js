@@ -4,8 +4,8 @@ var bcrypt = require('bcryptjs');
 var vow = require('vow');
 
 var dataStore = [
-				{email:'test@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key1',secret:'trtrtt'},
-				{email:'test2@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key2',secret:'ggfgffd'}
+				{email:'test@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key1'},
+				{email:'test2@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key2'}
 				];
 
 var memory = {chatboxes:{},sockets:{},users:{}};
@@ -61,6 +61,7 @@ var removeChatboxUser = function(socketId){
 };
 
 var handleDisconnect = function(socket){
+	var deferred = vow.defer();
 	var socketId = socket.id;
 
 	if(memory.sockets[socketId]){
@@ -68,15 +69,19 @@ var handleDisconnect = function(socket){
 		var chatboxKey = memory.sockets[socketId];
 		socket.broadcast.to(chatboxKey).emit('chatbox:goneOffline');
 		removeChatboxUser(socketId);
+		deferred.resolve({type:'chatbox'});
 	} else {
 		//its probably a normal user
 		socket.get('key',function(err,key){
 			if(key){
 				removeNormalUser(key,socketId);
+				deferred.resolve({type:'client',key:key});
 			}
 		});
 
 	}
+
+	return deferred.promise();
 
 };
 

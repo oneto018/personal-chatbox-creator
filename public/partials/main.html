@@ -1,3 +1,43 @@
 <div class="row">
-	<h1>key = {{key}}</h1>
+	<div class="col-md-12" id="mainNav">
+		<strong>STATUS:</strong> <span class="label" ng-class="{'label-success':connected,'label-danger':!(connected)}">{{connectMsg}}</span>
+	</div>
+	
+</div>
+<div class="row">
+	<div class="col-sm-3">
+		<div class="panel panel-default">
+		  <div class="panel-heading">visitors list</div>
+		  <div class="panel-body">
+			<div class="list-group">
+			  <a href="javascript:void(0)"  class="list-group-item" ng-repeat="(socketId, client) in clients" ng-click="setActive(socketId)" ng-class="{active:client.active}">
+			    {{socketId}} <span class="badge" ng-show="client.unanswerd">{{client.unanswerd}}</span>
+			  </a>
+			</div> <!-- list group ends -->
+		  </div>
+		</div> <!-- panel ends -->
+		
+	</div>
+	<div class="col-sm-6">
+		<div class="col-sm-12">
+			<div class="panel panel-default">
+			  <div class="panel-heading">Active session</div>
+			  <div class="panel-body">
+				<div ng-repeat-start="(socketId, client) in clients" class="chatroomBox" ng-if="client.active" nn-scroll-to-bottom watch-var="client.messages">
+					<div class="room">
+						<div ng-repeat-start="msg in client.messages" class="from"  ng-class="{fromYou:(msg.from=='you'),fromOther:((msg.from=='other'))}">
+							{{msg.from}}
+						</div>
+						<div ng-repeat-end class="item" ng-class="{you:(msg.from=='you'),other:((msg.from=='other'))}">{{msg.msg}}</div>
+					</div>
+				</div> <!-- chatroombox ends -->
+				<textarea class="form-control col-sm-12" id="chatTextArea" ng-if="client.active" placeholder="type your msg and press enter..." ng-repeat-end ng-model="client.curMessage" ng-enter="submitMsg(socketId)"></textarea>
+			  </div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<h1>key = {{key||Key}}</h1>
+	</div>
+	
 </div>

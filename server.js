@@ -49,6 +49,9 @@ io.sockets.on('connection', function (socket) {
 //--------normal user registration for particular chatbox----------
   socket.on('normal:join',function(data){
     socket.join(data.key);
+    var chatboxSocketId = chatbox.getSocketId(data.key);
+
+    io.sockets.socket(chatboxSocketId).emit('chatBox:gotUser', socket.id);
     socket.set('key',data.key,function(){
       socket.set('nickname', data.nick, function () {
         var chatBoxOnline = chatbox.addNormalUser(data.key,socket.id);
@@ -59,9 +62,37 @@ io.sockets.on('connection', function (socket) {
     
   });
 
+//--------- on recieveing msg from normal user -------------------------
+  socket.on('client:sendMsg',function(data){
+    var socketId = socket.id;
+   // var nick = data.nick;
+    //var msg = data.msg;
+    data.socketId = socketId;
+    var key = data.key;
+    delete data.key;
+    var chatboxSocketId = chatbox.getSocketId(key);
+    io.sockets.socket(chatboxSocketId).emit('chatBox:gotMsg', data);
+  });
+
+//------------- msg from chatbox to client -------------------------
+  socket.on('chatBoxToclient:sendMsg',function(data){
+    console.log('chatBoxToclient:sendMsg '+data.msg+' id='+data.id);
+    io.sockets.socket(data.id).emit('chatBoxToclient:gotMsg', {msg:data.msg});
+  });
+
 //-------- socket disconnect event ---------------------------------
   socket.on('disconnect',function(){
-    chatbox.handleDisconnect(socket);
+    var dis = chatbox.handleDisconnect(socket);
+    dis.then(function(data){
+      if(data.type=='client'){
+        var key = data.key;
+        var chatboxSocketId = chatbox.getSocketId(key);
+        io.sockets.socket(chatboxSocketId).emit('chatBox:goneUser', socket.id);
+      }
+    });
   });
+
+
+
 
 });
