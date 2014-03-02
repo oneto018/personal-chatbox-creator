@@ -13,7 +13,7 @@ var memory = {chatboxes:{},sockets:{},users:{}};
 
 var login = function (email,pass,socketId){
 	var deferred = vow.defer();
-	var q = pgQuery.query('select name,email,password as pass from chatbox_users where email = $1',[email]);
+	var q = pgQuery.query('select name,email,key,password as pass from chatbox_users where email = $1',[email]);
 	q.then(function(result){
 		if(result.rows.length>0){
 			var user = result.rows[0];
