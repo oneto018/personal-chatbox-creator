@@ -15,5 +15,10 @@ sign up url : http://serene-mountain-1869.herokuapp.com/#/signUp
 
 login url : http://serene-mountain-1869.herokuapp.com/#/login
 
+demo login details for testing
+-------------------------------
 
+warning: session would be unstable if you use following credentials. But it would give the feel of the app.
 
+email :test@t.com
+password: password
