@@ -160,7 +160,7 @@ var chatBoxOnline = function(key){
 };
 
 exports.login = login;
-exports signUp = signUp;
+exports.signUp = signUp;
 exports.getSocketId = getSocketId;
 exports.chatBoxOnline = chatBoxOnline;
 exports.addNormalUser = addNormalUser;
