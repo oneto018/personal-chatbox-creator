@@ -45,6 +45,11 @@ App.config(function($routeProvider, $locationProvider) {
       controller: MainCtl
     });
 
+  $routeProvider.when('/signUp', {
+      templateUrl: 'partials/signUp.html',
+      controller: signUpCtl
+  });
+
   $routeProvider.otherwise({redirectTo: '/login'});
     
     $locationProvider.html5Mode(false);
