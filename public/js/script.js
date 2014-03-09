@@ -266,9 +266,11 @@ function MainCtl($scope,Api,$location,storage,socket){
 function signUpCtl ($scope,Api,$timeout){
   $scope.signupAlert = {show:false};
   $scope.signedUpStatus = false;
+  $scope.user = {};
+
   $scope.signUp = function(){
     var successMsg = 'successfully registered. Now you can login';
-    if($scope.user && $scope.password){
+    if($scope.user.email && $scope.user.password){
       Api.signUp($scope.user,$scope.password)
         .sucess(function(data){
           $scope.user = {};
@@ -281,6 +283,8 @@ function signUpCtl ($scope,Api,$timeout){
         });
         
       
+    } else {
+      alert('enter email and password correctly');
     }
   };
 }
