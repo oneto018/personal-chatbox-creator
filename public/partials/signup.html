@@ -1,5 +1,6 @@
 <div class="row">
-	<div class="alert" ng-class="{alert-error:!signupAlert.status, alert-success:signupAlert.status}" ng-show="signupAlert">
+	<h1>Sign Up</h1>
+	<div class="alert" ng-class="{alert-error:!signupAlert.status, alert-success:signupAlert.status}" ng-show="signupAlert.show">
 		{{signupAlert.msg}}
 	</div>
 	<div class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-2">
@@ -13,7 +14,7 @@
 				<input type="password" class="form-control" ng-model="user.password" placeholder="Password">
 			</div>
 			<div class="form-group">
-				<button class="btn btn-primary" ng-click="login()">submit</button>
+				<button class="btn btn-primary" ng-click="signUp()">submit</button>
 			</div>
 		</form>
 	</div>
