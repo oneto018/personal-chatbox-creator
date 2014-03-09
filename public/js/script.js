@@ -271,8 +271,9 @@ function signUpCtl ($scope,Api,$timeout){
   $scope.signUp = function(){
     var successMsg = 'successfully registered. Now you can login';
     if($scope.user.email && $scope.user.password){
-      Api.signUp($scope.user,$scope.password)
+      Api.signUp($scope.user.email,$scope.password)
         .then(function(data){
+          console.log(data);
           $scope.user = {};
           $scope.signedUpStatus = data.status;
           $scope.signupAlert.msg = (data.status)? successMsg: data.error;
