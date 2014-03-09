@@ -1,10 +1,10 @@
 <div class="row">
 	<h1>Sign Up</h1>
-	<div class="alert" ng-class="{alert-error:!signupAlert.status, alert-success:signupAlert.status}" ng-show="signupAlert.show">
+	<div class="alert" ng-class="{alert-error:!signedUpStatus, alert-success:signedUpStatus}" ng-show="signupAlert.show">
 		{{signupAlert.msg}}
 	</div>
 	<div class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-2">
-		<form>
+		<form ng-hide="signedUpStatus">
 			<div class="form-group">
 				<label>user email</label>
 				<input type="text" class="form-control" ng-model="user.email" placeholder="Email">
@@ -17,5 +17,7 @@
 				<button class="btn btn-primary" ng-click="signUp()">submit</button>
 			</div>
 		</form>
+		<h2 ng-show="signedUpStatus">Now you can <a href="#/login">login</a></h2>
+
 	</div>
 </div>

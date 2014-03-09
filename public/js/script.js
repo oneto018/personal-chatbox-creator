@@ -51,7 +51,7 @@ App.config(function($routeProvider, $locationProvider) {
   });
  
 
-App.factory('Api',function($http,socket,storage){
+App.factory('Api',function($http,socket,storage,$window){
   return {
     key:false,
     setKey:function(key){
@@ -78,6 +78,12 @@ App.factory('Api',function($http,socket,storage){
       } else {
         return false;
       }
+    },
+
+    signUp:function(email,password){
+      var host = $window.location.host;
+      var base = 'http://'+host+'/';
+      return $http.post(base+'signUp',{email:email,password:password});
     }
 
   };
@@ -250,4 +256,26 @@ function MainCtl($scope,Api,$location,storage,socket){
 
   };
 
+}
+
+function signUpCtl ($scope,Api,$timeout){
+  $scope.signupAlert = {show:false};
+  $scope.signedUpStatus = false;
+  $scope.signUp = function(){
+    var successMsg = 'successfully registered. Now you can login';
+    if($scope.user && $scope.password){
+      Api.signUp($scope.user,$scope.password)
+        .sucess(function(data){
+          $scope.user = {};
+          $scope.signedUpStatus = data.status;
+          $scope.signupAlert.msg = (data.status)? successMsg: data.error;
+          $scope.signupAlert.show = true;
+          $timeout(function(){
+            $scope.signupAlert.show = false;
+          },6000);
+        });
+        
+      
+    }
+  };
 }
