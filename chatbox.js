@@ -73,7 +73,7 @@ var signUp = function(email,password){
 						q.then(function(result){
 							deferred.resolve();
 						},function(err){
-							deferred.reject('error creating user');
+							deferred.reject('error creating user: '+err);
 						});
 			        } else {
 			        	deferred.reject('error in generating your password');
