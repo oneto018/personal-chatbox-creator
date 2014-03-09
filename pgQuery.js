@@ -12,7 +12,7 @@ module.exports = {
           if(result){
           	deferred.resolve(result);
           } else if(err){
-          	deferred.reject();
+          	deferred.reject(err);
           }
           //cb(err, result);
         })

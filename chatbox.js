@@ -70,7 +70,7 @@ var signUp = function(email,password){
 			        // Store hash in your password DB.
 			        if(hash){
 				        var q = pgQuery.query('INSERT INTO chatbox_users (email,key,password) VALUES ($1,$2,$3)',[email,key,password]);
-						q.then(function(result){
+						q.then(function(){
 							deferred.resolve();
 						},function(err){
 							deferred.reject('error creating user: '+err);
