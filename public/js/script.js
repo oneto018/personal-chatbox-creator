@@ -46,7 +46,7 @@ App.config(function($routeProvider, $locationProvider) {
     });
 
   $routeProvider.when('/signUp', {
-      templateUrl: 'partials/signUp.html',
+      templateUrl: 'partials/signup.html',
       controller: signUpCtl
   });
 
