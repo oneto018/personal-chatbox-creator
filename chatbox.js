@@ -3,13 +3,13 @@ var _pull = require('lodash-node/modern/arrays/pull');
 var bcrypt = require('bcryptjs');
 var vow = require('vow');
 var pgQuery = require('./pgQuery.js');
+var rotate = require("rotate");
 
-var dataStore = [
-				{email:'test@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key1'},
-				{email:'test2@t.com',pass:'$2a$10$uHsgpKbATpMuJw9wLRY/feR3Xjj9DM2pX2tcPQaMEZmtNoQQVqoba',key:'key2'}
-				];
+
 
 var memory = {chatboxes:{},sockets:{},users:{}};
+
+
 
 var login = function (email,pass,socketId){
 	var deferred = vow.defer();
@@ -18,6 +18,8 @@ var login = function (email,pass,socketId){
 		if(result.rows.length>0){
 			var user = result.rows[0];
 			var hash = user.pass;
+			var userKey = user.key;
+
 			bcrypt.compare(pass, hash, function(err, res) {
 	    		// res == true
 	    		if(res){
@@ -35,6 +37,61 @@ var login = function (email,pass,socketId){
 	//var user = _find(dataStore,{email:email});
 	return deferred.promise();
 };
+
+var checkEmailAvailable = function(email){
+	var deferred = vow.defer();
+	pgQuery.query('select email from chatbox_users where email = $1',[email])
+			.then(function(result){
+				if(result.rows.length >0){
+					deferred.reject();
+				} else {
+					deferred.resolve();
+				}
+			},function(){
+				deferred.reject();
+			});
+	return deferred.promise();
+};
+
+var signUp = function(email,password){
+	var deferred = vow.defer();
+	checkEmailAvailable(email)
+	.then(function(){
+
+	},function(){
+
+	});
+	if(email && password){
+	 checkEmailAvailable(email)
+		.then(function(){
+			var key = new Buffer(email).toString('base64');
+			bcrypt.genSalt(10, function(err, salt) {
+			    bcrypt.hash(password, salt, function(err, hash) {
+			        // Store hash in your password DB.
+			        if(hash){
+				        var q = pgQuery.query('INSERT INTO chatbox_users (email,key,password) VALUES ($1,$2,$3)',[email,key,password]);
+						q.then(function(result){
+							deferred.resolve();
+						},function(err){
+							deferred.reject('error creating user');
+						});
+			        } else {
+			        	deferred.reject('error in generating your password');
+			        }
+			    });
+			});
+		},function(){
+			deferred.reject('email already present');
+		});
+		
+	} else {
+		deferred.reject('email or password can\'t be empty');
+	}
+
+	return deferred.promise();
+	
+};
+
 
 var addNormalUser = function(key,socketId){
 	if(!memory.users[key]){
@@ -103,7 +160,7 @@ var chatBoxOnline = function(key){
 };
 
 exports.login = login;
-
+exports signUp = signUp;
 exports.getSocketId = getSocketId;
 exports.chatBoxOnline = chatBoxOnline;
 exports.addNormalUser = addNormalUser;
