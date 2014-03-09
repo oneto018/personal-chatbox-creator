@@ -1,4 +1,4 @@
-var App = angular.module('chatBoxMaster',['socket-io','ngRoute']);
+var App = angular.module('chatBoxMaster',['socket-io','pasvaz.bindonce','ngRoute']);
 App.directive('nnScrollToBottom',function(){
   return {
     restrict:'A',

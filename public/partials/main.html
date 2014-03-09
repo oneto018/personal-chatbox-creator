@@ -25,10 +25,12 @@
 			  <div class="panel-body">
 				<div ng-repeat-start="(socketId, client) in clients" class="chatroomBox" ng-if="client.active" nn-scroll-to-bottom watch-var="client.messages">
 					<div class="room">
-						<div ng-repeat-start="msg in client.messages" class="from"  ng-class="{fromYou:(msg.from=='you'),fromOther:((msg.from=='other'))}">
-							{{msg.from}}
+						<div ng-repeat-start="msg in client.messages" bindonce  class="from"  bo-class="{fromYou:(msg.from=='you'),fromOther:((msg.from=='other'))}" bo-text="msg.from">
+							
 						</div>
-						<div ng-repeat-end class="item" ng-class="{you:(msg.from=='you'),other:((msg.from=='other'))}">{{msg.msg}}</div>
+						<div ng-repeat-end class="item" bo-class="{you:(msg.from=='you'),other:((msg.from=='other'))}" bo-text="msg.msg">
+							
+						</div>
 					</div>
 				</div> <!-- chatroombox ends -->
 				<textarea class="form-control col-sm-12" id="chatTextArea" ng-if="client.active" placeholder="type your msg and press enter..." ng-repeat-end ng-model="client.curMessage" ng-enter="submitMsg(socketId)"></textarea>
