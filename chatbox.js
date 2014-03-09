@@ -69,7 +69,7 @@ var signUp = function(email,password){
 			    bcrypt.hash(password, salt, function(err, hash) {
 			        // Store hash in your password DB.
 			        if(hash){
-				        var q = pgQuery.query('INSERT INTO chatbox_users (email,key,password) VALUES ($1,$2,$3)',[email,key,password]);
+				        var q = pgQuery.query('INSERT INTO chatbox_users (email,key,password) VALUES ($1,$2,$3)',[email,key,hash]);
 						q.then(function(){
 							deferred.resolve();
 						},function(err){
