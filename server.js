@@ -17,7 +17,9 @@ app.use(express.static(__dirname + '/public'));
 
 server.listen(process.env.PORT || 80);
 
-
+app.get('/status',function(req,res){
+  res.send("simple"+" request!");
+});
 
 app.get('/client/:key/:name',function(req,res){
   res.render('client',{name:req.params.name,key:req.params.key});
